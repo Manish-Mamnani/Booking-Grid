@@ -1,0 +1,6 @@
+@BookingGrid.BookingService_HostAddress = http://localhost:5067
+
+GET {{BookingGrid.BookingService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
