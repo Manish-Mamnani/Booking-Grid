@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="BookingGrid.AuthService/BookingGrid.AuthService.csproj" />
   <Project Path="BookingGrid.Contracts/BookingGrid.Contracts.csproj" />
-  <Project Path="BookingGrid.HotelService/BookingGrid.MainService.csproj" />
+  <Project Path="BookingGrid.MainService/BookingGrid.MainService.csproj" />
 </Solution>
