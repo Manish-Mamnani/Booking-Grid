@@ -25,7 +25,7 @@ namespace BookingGrid.AuthService.Services
         public string GenerateToken(User user)
         {
             // Prefer environment variable; fall back to appsettings
-            var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? _configuration["Jwt:Key"]!;
+            var jwtKey = _configuration["Jwt:Key"]!;
             var claims = new[]
             {
                 new Claim("UserId", user.UserId.ToString()),

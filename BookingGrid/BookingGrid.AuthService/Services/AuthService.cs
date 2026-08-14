@@ -86,58 +86,6 @@ namespace BookingGrid.AuthService.Services
             };
         }
 
-        public async Task RequestPasswordResetAsync(ForgotPasswordDto dto)
-        {
-            var normalizedEmail = dto.Email.Trim().ToLowerInvariant();
-            var user = await _userRepository.GetByEmailAsync(normalizedEmail);
-
-            // Always return success to prevent email enumeration attacks
-            if (user == null) return;
-
-            // Generate a 6-digit numeric OTP
-            var otp = new Random().Next(100000, 999999).ToString();
-
-            user.ResetOtp = otp;
-            user.ResetOtpExpiry = DateTime.UtcNow.AddMinutes(10);
-            await _userRepository.SaveChangesAsync();
-        }
-
-        public async Task<bool> VerifyOtpAsync(VerifyOtpDto dto)
-        {
-            var normalizedEmail = dto.Email.Trim().ToLowerInvariant();
-            var user = await _userRepository.GetByEmailAsync(normalizedEmail);
-
-            if (user == null || user.ResetOtp == null || user.ResetOtpExpiry == null)
-                return false;
-
-            if (user.ResetOtp != dto.Otp.Trim())
-                return false;
-
-            if (user.ResetOtpExpiry < DateTime.UtcNow)
-                return false;
-
-            return true;
-        }
-
-        public async Task ResetPasswordAsync(ResetPasswordDto dto)
-        {
-            var normalizedEmail = dto.Email.Trim().ToLowerInvariant();
-            var user = await _userRepository.GetByEmailAsync(normalizedEmail);
-
-            if (user == null)
-                throw new Exception("User not found.");
-
-            if (user.ResetOtp != dto.Otp.Trim() || user.ResetOtpExpiry < DateTime.UtcNow)
-                throw new Exception("Invalid or expired OTP.");
-
-            // Update password and clear OTP fields
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
-            user.ResetOtp = null;
-            user.ResetOtpExpiry = null;
-
-            await _userRepository.SaveChangesAsync();
-        }
-
         public async Task<IEnumerable<UserDto>> GetAllManagersAsync()
         {
             var managers = await _userRepository.GetAllByRoleAsync("HotelManager");

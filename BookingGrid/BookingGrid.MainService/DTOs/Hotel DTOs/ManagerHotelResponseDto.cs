@@ -1,0 +1,18 @@
+namespace BookingGrid.MainService.DTOs
+{
+    public class ManagerHotelResponseDto
+    {
+        public int HotelId { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+
+        public string City { get; set; } = string.Empty;
+
+        public double Rating { get; set; }
+
+        public string Status { get; set; } = string.Empty;
+
+        public decimal MinPrice { get; set; }
+
+    }
+}
