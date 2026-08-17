@@ -1,8 +1,7 @@
-using BookingGrid.MainService.Data;
 using BookingGrid.MainService.DTOs;
 using BookingGrid.MainService.Models;
+using BookingGrid.MainService.Repositories.Interfaces;
 using BookingGrid.MainService.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookingGrid.MainService.Services
 {
@@ -11,15 +10,15 @@ namespace BookingGrid.MainService.Services
     /// </summary>
     public class ReviewService : IReviewService
     {
-        private readonly MainDbContext _context;
+        private readonly IReviewRepository _repo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReviewService"/> class.
         /// </summary>
-        /// <param name="context">The review database context.</param>
-        public ReviewService(MainDbContext context)
+        /// <param name="repo">The review repository.</param>
+        public ReviewService(IReviewRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         public async Task<ReviewDto> AddReviewAsync(int userId, string userName, CreateReviewDto dto)
@@ -34,8 +33,8 @@ namespace BookingGrid.MainService.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.Reviews.Add(review);
-            await _context.SaveChangesAsync();
+            await _repo.AddAsync(review);
+            await _repo.SaveChangesAsync();
 
             return MapToDto(review);
         }
@@ -52,19 +51,16 @@ namespace BookingGrid.MainService.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.Reviews.Add(review);
-            await _context.SaveChangesAsync();
+            await _repo.AddAsync(review);
+            await _repo.SaveChangesAsync();
 
             return MapToDto(review);
         }
 
         public async Task<List<ReviewDto>> GetReviewsByHotelIdAsync(int hotelId)
         {
-            return await _context.Reviews
-                .Where(r => r.HotelId == hotelId)
-                .OrderByDescending(r => r.CreatedAt)
-                .Select(r => MapToDto(r))
-                .ToListAsync();
+            var reviews = await _repo.GetByHotelIdAsync(hotelId);
+            return reviews.Select(MapToDto).ToList();
         }
 
         private static ReviewDto MapToDto(Review r)
