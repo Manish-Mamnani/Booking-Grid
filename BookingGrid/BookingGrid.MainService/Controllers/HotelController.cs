@@ -28,23 +28,37 @@ namespace BookingGrid.MainService.Controllers
             _queryService = queryService;
         }
 
-        // 🔹 Create Hotel
         [Authorize(Roles = "HotelManager")]
         [HttpPost]
         public async Task<IActionResult> CreateHotel(CreateHotelDto dto)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
-            var email = User.FindFirst("Email")!.Value;
-            var result = await _hotelService.CreateHotelAsync(userId, email,dto);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userIdClaim = User.FindFirst("UserId");
+            var emailClaim = User.FindFirst("Email");
+            var roleClaim = User.FindFirst("Role");
+
+            if (userIdClaim == null || emailClaim == null) return Unauthorized();
+            if (roleClaim == null || roleClaim.Value != "HotelManager") return Forbid();
+
+            var userId = int.Parse(userIdClaim.Value);
+            var result = await _hotelService.CreateHotelAsync(userId, emailClaim.Value, dto);
             return Ok(result);
         }
 
-        // 🔹 Create Room
         [Authorize(Roles = "HotelManager")]
         [HttpPost("rooms")]
         public async Task<IActionResult> CreateRoom(CreateRoomDto dto)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
+
+            if (userIdClaim == null) return Unauthorized();
+            if (roleClaim == null || roleClaim.Value != "HotelManager") return Forbid();
+
+            var userId = int.Parse(userIdClaim.Value);
             var result = await _hotelService.CreateRoomAsync(userId, dto);
             return Ok(result);
         }
@@ -53,6 +67,9 @@ namespace BookingGrid.MainService.Controllers
         [HttpPut("{id}/approve")]
         public async Task<IActionResult> ApproveHotel(int id)
         {
+            var roleClaim = User.FindFirst("Role");
+            if (roleClaim == null || roleClaim.Value != "Admin") return Forbid();
+
             var result = await _hotelService.ApproveHotelAsync(id);
             return Ok(result);
         }
@@ -61,6 +78,9 @@ namespace BookingGrid.MainService.Controllers
         [HttpPut("{id}/reject")]
         public async Task<IActionResult> RejectHotel(int id)
         {
+            var roleClaim = User.FindFirst("Role");
+            if (roleClaim == null || roleClaim.Value != "Admin") return Forbid();
+
             var result = await _hotelService.RejectHotelAsync(id);
             return Ok(result);
         }
@@ -69,6 +89,9 @@ namespace BookingGrid.MainService.Controllers
         [HttpGet("approved")]
         public async Task<IActionResult> GetApprovedHotels()
         {
+            var roleClaim = User.FindFirst("Role");
+            if (roleClaim == null || roleClaim.Value != "Admin") return Forbid();
+
             var result = await _hotelService.GetApprovedHotelsAsync();
             return Ok(result);
         }
@@ -77,6 +100,9 @@ namespace BookingGrid.MainService.Controllers
         [HttpGet("pending")]
         public async Task<IActionResult> GetPendingHotels()
         {
+            var roleClaim = User.FindFirst("Role");
+            if (roleClaim == null || roleClaim.Value != "Admin") return Forbid();
+
             var result = await _hotelService.GetPendingHotelsAsync();
             return Ok(result);
         }
@@ -85,15 +111,18 @@ namespace BookingGrid.MainService.Controllers
         [HttpGet("admin/all")]
         public async Task<IActionResult> GetAllHotelsForAdmin()
         {
+            var roleClaim = User.FindFirst("Role");
+            if (roleClaim == null || roleClaim.Value != "Admin") return Forbid();
+
             var result = await _hotelService.GetAllHotelsAsync();
             return Ok(result);
         }
 
-        // 🔹 Get Hotels (Search + Filter + Sort + Pagination)
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetHotels([FromQuery] HotelQueryParams query)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var result = await _queryService.GetHotelsAsync(query);
             return Ok(result);
         }
@@ -109,7 +138,15 @@ namespace BookingGrid.MainService.Controllers
         [HttpPut("rooms/{roomId}")]
         public async Task<IActionResult> UpdateRoom(int roomId, UpdateRoomDto dto)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
+
+            if (userIdClaim == null) return Unauthorized();
+            if (roleClaim == null || roleClaim.Value != "HotelManager") return Forbid();
+
+            var userId = int.Parse(userIdClaim.Value);
             var result = await _hotelService.UpdateRoomAsync(roomId, userId, dto);
             return Ok(result);
         }
@@ -128,14 +165,20 @@ namespace BookingGrid.MainService.Controllers
             return Ok(result);
         }
 
-
         [Authorize(Roles = "Admin,HotelManager")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateHotel(int id, CreateHotelDto dto)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
-            var role = User.FindFirst("Role")!.Value;
-            var result = await _hotelService.UpdateHotelAsync(id, userId, role, dto);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
+
+            if (userIdClaim == null || roleClaim == null) return Unauthorized();
+            if (roleClaim.Value != "HotelManager" && roleClaim.Value != "Admin") return Forbid();
+
+            var userId = int.Parse(userIdClaim.Value);
+            var result = await _hotelService.UpdateHotelAsync(id, userId, roleClaim.Value, dto);
             return Ok(result);
         }
 
@@ -143,9 +186,14 @@ namespace BookingGrid.MainService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHotel(int id)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
-            var role = User.FindFirst("Role")!.Value;
-            await _hotelService.DeleteHotelAsync(id, userId, role);
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
+
+            if (userIdClaim == null || roleClaim == null) return Unauthorized();
+            if (roleClaim.Value != "HotelManager" && roleClaim.Value != "Admin") return Forbid();
+
+            var userId = int.Parse(userIdClaim.Value);
+            await _hotelService.DeleteHotelAsync(id, userId, roleClaim.Value);
             return NoContent();
         }
 
@@ -153,7 +201,13 @@ namespace BookingGrid.MainService.Controllers
         [HttpGet("my")]
         public async Task<IActionResult> GetMyHotels()
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
+
+            if (userIdClaim == null) return Unauthorized();
+            if (roleClaim == null || roleClaim.Value != "HotelManager") return Forbid();
+
+            var userId = int.Parse(userIdClaim.Value);
             var result = await _hotelService.GetMyHotelsAsync(userId);
             return Ok(result);
         }
@@ -162,10 +216,15 @@ namespace BookingGrid.MainService.Controllers
         [HttpGet("my/room-ids")]
         public async Task<IActionResult> GetMyRoomIds()
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
+
+            if (userIdClaim == null) return Unauthorized();
+            if (roleClaim == null || roleClaim.Value != "HotelManager") return Forbid();
+
+            var userId = int.Parse(userIdClaim.Value);
             var result = await _hotelService.GetMyRoomIdsAsync(userId);
             return Ok(result);
         }
-
     }
 }

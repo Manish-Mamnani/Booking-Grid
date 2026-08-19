@@ -27,7 +27,12 @@ namespace Hospitium.ReviewService.Controllers
         [HttpPost]
         public async Task<IActionResult> AddReview(CreateReviewDto dto)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null) return Unauthorized();
+
+            var userId = int.Parse(userIdClaim.Value);
             var userName = User.FindFirst("FullName")?.Value ?? User.FindFirst("Email")?.Value ?? "Guest";
 
             var result = await _reviewService.AddReviewAsync(userId, userName, dto);
@@ -38,7 +43,12 @@ namespace Hospitium.ReviewService.Controllers
         [HttpPost("rate")]
         public async Task<IActionResult> RateHotel([FromQuery] int hotelId, [FromQuery] int rating)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null) return Unauthorized();
+
+            var userId = int.Parse(userIdClaim.Value);
             var userName = User.FindFirst("FullName")?.Value ?? User.FindFirst("Email")?.Value ?? "Guest";
 
             var result = await _reviewService.AddRatingAsync(userId, userName, hotelId, rating);

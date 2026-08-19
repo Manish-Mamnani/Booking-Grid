@@ -23,21 +23,18 @@ namespace Hospitium.BookingService.Controllers
             _service = service;
         }
 
-        // Only authenticated users can book
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateBooking(CreateBookingDto dto)
         {
-            //  Extract UserId from JWT
-            var userIdClaim = User.FindFirst("UserId");
-            var email = User.FindFirst("Email")!.Value;
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            if (userIdClaim == null)
-                return Unauthorized();
+            var userIdClaim = User.FindFirst("UserId");
+            var emailClaim = User.FindFirst("Email");
+            if (userIdClaim == null || emailClaim == null) return Unauthorized();
 
             var userId = int.Parse(userIdClaim.Value);
-
-            var result = await _service.CreateBookingAsync(userId, email, dto);
+            var result = await _service.CreateBookingAsync(userId, emailClaim.Value, dto);
 
             return Ok(result);
         }
@@ -46,9 +43,11 @@ namespace Hospitium.BookingService.Controllers
         [HttpGet("my")]
         public async Task<IActionResult> GetMyBookings([FromQuery] string? type)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null) return Unauthorized();
 
-            var result = await _service.GetUserBookingsAsync(userId,type);
+            var userId = int.Parse(userIdClaim.Value);
+            var result = await _service.GetUserBookingsAsync(userId, type);
 
             return Ok(result);
         }
@@ -57,8 +56,10 @@ namespace Hospitium.BookingService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllBookings([FromQuery] DateTime? date)
         {
-            var result = await _service.GetAllBookingsAsync(date);
+            var roleClaim = User.FindFirst("Role");
+            if (roleClaim == null || roleClaim.Value != "Admin") return Forbid();
 
+            var result = await _service.GetAllBookingsAsync(date);
             return Ok(result);
         }
 
@@ -66,8 +67,13 @@ namespace Hospitium.BookingService.Controllers
         [HttpGet("manager")]
         public async Task<IActionResult> GetManagerBookings()
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
+            
+            if (userIdClaim == null) return Unauthorized();
+            if (roleClaim == null || roleClaim.Value != "HotelManager") return Forbid();
 
+            var userId = int.Parse(userIdClaim.Value);
             var result = await _service.GetManagerBookingsAsync(userId);
 
             return Ok(result);
@@ -77,11 +83,14 @@ namespace Hospitium.BookingService.Controllers
         [HttpPut("{bookingId}/cancel")]
         public async Task<IActionResult> CancelBooking(int bookingId)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
-            var role = User.FindFirst("Role")!.Value;
-            var email = User.FindFirst("Email")!.Value;
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
+            var emailClaim = User.FindFirst("Email");
 
-            var result = await _service.CancelBookingAsync(bookingId, userId, email, role);
+            if (userIdClaim == null || roleClaim == null || emailClaim == null) return Unauthorized();
+
+            var userId = int.Parse(userIdClaim.Value);
+            var result = await _service.CancelBookingAsync(bookingId, userId, emailClaim.Value, roleClaim.Value);
 
             return Ok(result);
         }
@@ -90,10 +99,14 @@ namespace Hospitium.BookingService.Controllers
         [HttpPut("{bookingId}/complete")]
         public async Task<IActionResult> CompleteBooking(int bookingId)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
-            var role = User.FindFirst("Role")!.Value;
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
 
-            var result = await _service.CompleteBookingAsync(bookingId, userId, role);
+            if (userIdClaim == null || roleClaim == null) return Unauthorized();
+            if (roleClaim.Value != "HotelManager" && roleClaim.Value != "Admin") return Forbid();
+
+            var userId = int.Parse(userIdClaim.Value);
+            var result = await _service.CompleteBookingAsync(bookingId, userId, roleClaim.Value);
 
             return Ok(result);
         }
@@ -102,10 +115,13 @@ namespace Hospitium.BookingService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBookingById(int id)
         {
-            var userId = int.Parse(User.FindFirst("UserId")!.Value);
-            var role = User.FindFirst("Role")!.Value;
+            var userIdClaim = User.FindFirst("UserId");
+            var roleClaim = User.FindFirst("Role");
 
-            var result = await _service.GetBookingByIdAsync(id, userId, role);
+            if (userIdClaim == null || roleClaim == null) return Unauthorized();
+
+            var userId = int.Parse(userIdClaim.Value);
+            var result = await _service.GetBookingByIdAsync(id, userId, roleClaim.Value);
 
             return Ok(result);
         }

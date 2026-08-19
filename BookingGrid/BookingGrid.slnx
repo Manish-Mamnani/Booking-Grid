@@ -2,4 +2,5 @@
   <Project Path="BookingGrid.AuthService/BookingGrid.AuthService.csproj" />
   <Project Path="BookingGrid.Gateway/BookingGrid.Gateway.csproj" Id="95657aa7-d3e8-4daa-a913-12431474c0fb" />
   <Project Path="BookingGrid.MainService/BookingGrid.MainService.csproj" />
+  <Project Path="BookingGrid.Testing/BookingGrid.Testing.csproj" Id="8edbad23-019c-4280-8621-1ff4bb7e1035" />
 </Solution>

@@ -1,4 +1,4 @@
-﻿using BookingGrid.AuthService.DTOs;
+using BookingGrid.AuthService.DTOs;
 using BookingGrid.AuthService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +26,7 @@ namespace BookingGrid.AuthService.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto dto)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var result = await _authService.RegisterAsync(dto);
             return Ok(result);
         }
@@ -33,6 +34,7 @@ namespace BookingGrid.AuthService.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var result = await _authService.LoginAsync(dto);
             return Ok(result);
         }

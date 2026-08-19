@@ -1,4 +1,4 @@
-﻿using BookingGrid.AuthService.Services.Interfaces;
+using BookingGrid.AuthService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +27,12 @@ namespace BookingGrid.AuthService.Controllers
         [HttpGet("managers")]
         public async Task<IActionResult> GetManagers()
         {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null) return Unauthorized();
+            
+            var roleClaim = User.FindFirst("Role");
+            if (roleClaim == null || roleClaim.Value != "Admin") return Forbid();
+
             var result = await _authService.GetAllManagersAsync();
             return Ok(result);
         }
