@@ -24,6 +24,7 @@ namespace BookingGrid.AuthService.Controllers
         }
 
         [HttpPost("register")]
+        /// <summary>Registers a new user and returns a JWT-backed session response.</summary>
         public async Task<IActionResult> Register(RegisterDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -32,6 +33,7 @@ namespace BookingGrid.AuthService.Controllers
         }
 
         [HttpPost("login")]
+        /// <summary>Authenticates the supplied credentials and returns a JWT-backed session response.</summary>
         public async Task<IActionResult> Login(LoginDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

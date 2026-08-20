@@ -2,6 +2,7 @@
 
 namespace BookingGrid.MainService.DTOs
 {
+    /// <summary>Request payload used to add a room type and its initial inventory to a hotel.</summary>
     public class CreateRoomDto
     {
         [Required]

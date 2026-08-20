@@ -4,15 +4,18 @@ using System.Text.Json;
 
 namespace BookingGrid.MainService.Middleware
 {
+    /// <summary>Maps main-service domain exceptions to consistent JSON HTTP error responses.</summary>
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
 
+        /// <summary>Initializes the middleware with the next request-pipeline delegate.</summary>
         public ExceptionMiddleware(RequestDelegate next)
         {
             _next = next;
         }
 
+        /// <summary>Executes the next pipeline component and handles exceptions from it.</summary>
         public async Task InvokeAsync(HttpContext context)
         {
             try

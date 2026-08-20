@@ -30,6 +30,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "HotelManager")]
         [HttpPost]
+        /// <summary>Creates a hotel owned by the authenticated hotel manager.</summary>
         public async Task<IActionResult> CreateHotel(CreateHotelDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -48,6 +49,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "HotelManager")]
         [HttpPost("rooms")]
+        /// <summary>Adds room inventory to an approved hotel owned by the caller.</summary>
         public async Task<IActionResult> CreateRoom(CreateRoomDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -65,6 +67,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}/approve")]
+        /// <summary>Approves a hotel for public availability.</summary>
         public async Task<IActionResult> ApproveHotel(int id)
         {
             var roleClaim = User.FindFirst("Role");
@@ -76,6 +79,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}/reject")]
+        /// <summary>Rejects a hotel from the approval workflow.</summary>
         public async Task<IActionResult> RejectHotel(int id)
         {
             var roleClaim = User.FindFirst("Role");
@@ -87,6 +91,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("approved")]
+        /// <summary>Returns approved hotels for an administrator.</summary>
         public async Task<IActionResult> GetApprovedHotels()
         {
             var roleClaim = User.FindFirst("Role");
@@ -98,6 +103,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("pending")]
+        /// <summary>Returns hotels awaiting approval for an administrator.</summary>
         public async Task<IActionResult> GetPendingHotels()
         {
             var roleClaim = User.FindFirst("Role");
@@ -109,6 +115,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("admin/all")]
+        /// <summary>Returns every hotel, regardless of its workflow status, for an administrator.</summary>
         public async Task<IActionResult> GetAllHotelsForAdmin()
         {
             var roleClaim = User.FindFirst("Role");
@@ -120,6 +127,7 @@ namespace BookingGrid.MainService.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        /// <summary>Searches and paginates publicly available hotels.</summary>
         public async Task<IActionResult> GetHotels([FromQuery] HotelQueryParams query)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -128,6 +136,7 @@ namespace BookingGrid.MainService.Controllers
         }
 
         [HttpGet("rooms/{roomId}")]
+        /// <summary>Returns a room by identifier.</summary>
         public async Task<IActionResult> GetRoom(int roomId)
         {
             var result = await _hotelService.GetRoomByIdAsync(roomId);
@@ -136,6 +145,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "HotelManager")]
         [HttpPut("rooms/{roomId}")]
+        /// <summary>Updates room price and capacity for the authenticated hotel manager.</summary>
         public async Task<IActionResult> UpdateRoom(int roomId, UpdateRoomDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -152,6 +162,7 @@ namespace BookingGrid.MainService.Controllers
         }
 
         [HttpGet("{id}")]
+        /// <summary>Returns an approved hotel by identifier.</summary>
         public async Task<IActionResult> GetHotel(int id)
         {
             var result = await _hotelService.GetHotelByIdAsync(id);
@@ -159,6 +170,7 @@ namespace BookingGrid.MainService.Controllers
         }
 
         [HttpGet("{id}/rooms")]
+        /// <summary>Returns rooms belonging to an approved hotel.</summary>
         public async Task<IActionResult> GetRooms(int id)
         {
             var result = await _hotelService.GetRoomsByHotelIdAsync(id);
@@ -167,6 +179,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "Admin,HotelManager")]
         [HttpPut("{id}")]
+        /// <summary>Updates a hotel for its owner or an administrator.</summary>
         public async Task<IActionResult> UpdateHotel(int id, CreateHotelDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -184,6 +197,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "Admin,HotelManager")]
         [HttpDelete("{id}")]
+        /// <summary>Soft-deletes a hotel for its owner or an administrator.</summary>
         public async Task<IActionResult> DeleteHotel(int id)
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -199,6 +213,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "HotelManager")]
         [HttpGet("my")]
+        /// <summary>Returns hotels owned by the authenticated hotel manager.</summary>
         public async Task<IActionResult> GetMyHotels()
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -214,6 +229,7 @@ namespace BookingGrid.MainService.Controllers
 
         [Authorize(Roles = "HotelManager")]
         [HttpGet("my/room-ids")]
+        /// <summary>Returns identifiers of rooms owned by the authenticated hotel manager.</summary>
         public async Task<IActionResult> GetMyRoomIds()
         {
             var userIdClaim = User.FindFirst("UserId");

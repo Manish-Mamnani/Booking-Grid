@@ -63,6 +63,7 @@ namespace BookingGrid.MainService.Services
             return reviews.Select(MapToDto).ToList();
         }
 
+        /// <summary>Maps a persisted review to its API response representation.</summary>
         private static ReviewDto MapToDto(Review r)
         {
             return new ReviewDto

@@ -201,6 +201,7 @@ namespace BookingGrid.MainService.Services
             if (hotel.Status != "Approved")
                 throw new InvalidHotelOperationException("Cannot update rooms of unapproved hotel.");
 
+            // Adjust free inventory by the capacity delta so existing reservations remain accounted for.
             int difference = dto.TotalCount - room.TotalCount;
 
             room.Price = dto.Price;
@@ -260,6 +261,7 @@ namespace BookingGrid.MainService.Services
             return hotels.Select(MapToHotelResponse).ToList();
         }
 
+        /// <summary>Maps a hotel entity and its loaded rooms to the public response shape.</summary>
         private HotelResponseDto MapToHotelResponse(Hotel h)
         {
             return new HotelResponseDto

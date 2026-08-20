@@ -22,6 +22,11 @@ namespace BookingGrid.AuthService.Services
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Generates a signed JWT containing both application-specific and standard identity claims.
+        /// </summary>
+        /// <param name="user">The authenticated user represented by the token.</param>
+        /// <returns>A signed JWT ready to use as a bearer token.</returns>
         public string GenerateToken(User user)
         {
             // Prefer environment variable; fall back to appsettings

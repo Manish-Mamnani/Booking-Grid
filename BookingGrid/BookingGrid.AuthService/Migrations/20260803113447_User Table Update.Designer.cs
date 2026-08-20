@@ -15,7 +15,6 @@ namespace BookingGrid.AuthService.Migrations
     [Migration("20260803113447_User Table Update")]
     partial class UserTableUpdate
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BookingGrid.AuthService.Migrations
 {
-    /// <inheritdoc />
     public partial class UserTableUpdate : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
@@ -20,7 +18,6 @@ namespace BookingGrid.AuthService.Migrations
                 table: "Users");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(

@@ -36,6 +36,7 @@ namespace BookingGrid.AuthService.Services
             }
 
             var requestedRole = dto.Role?.Trim();
+            // Self-registration can request only the HotelManager role; every other value is a standard user.
             var finalRole = (requestedRole == "HotelManager") ? "HotelManager" : "User";
 
             var user = new User

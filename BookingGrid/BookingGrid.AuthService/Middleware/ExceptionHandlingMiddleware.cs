@@ -4,15 +4,20 @@ using System.Text.Json;
 
 namespace BookingGrid.AuthService.Middleware
 {
+    /// <summary>
+    /// Converts authentication-domain exceptions into consistent JSON HTTP error responses.
+    /// </summary>
     public class ExceptionHandlingMiddleware 
     {
         private readonly RequestDelegate _next;
         
+        /// <summary>Initializes the middleware with the next request-pipeline delegate.</summary>
         public ExceptionHandlingMiddleware(RequestDelegate next)
         {
             _next = next;
         }
 
+        /// <summary>Executes the next pipeline component and maps known exceptions when they occur.</summary>
         public async Task InvokeAsync(HttpContext context)
         {
             try
@@ -25,6 +30,7 @@ namespace BookingGrid.AuthService.Middleware
             }
         }
 
+        /// <summary>Writes the HTTP status and JSON error body associated with an exception.</summary>
         public static Task HandleExceptionAsync(Exception exception,HttpContext context)
         {
             var statusCode = exception switch

@@ -1,5 +1,6 @@
 ﻿namespace BookingGrid.MainService.Exceptions
 {
+    /// <summary>Thrown when a submitted hotel rating is outside the accepted range.</summary>
     public class InvalidRatingException : Exception
     {
         public InvalidRatingException()

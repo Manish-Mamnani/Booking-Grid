@@ -1,5 +1,6 @@
 namespace BookingGrid.MainService.DTOs
 {
+    /// <summary>Hotel representation tailored to management-facing views.</summary>
     public class ManagerHotelResponseDto
     {
         public int HotelId { get; set; }

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookingGrid.MainService.DTOs
 {
+    /// <summary>Request payload used to create or update a hotel's editable details.</summary>
     public class CreateHotelDto
     {
         [Required]

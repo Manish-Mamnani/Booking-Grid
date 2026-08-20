@@ -25,6 +25,7 @@ namespace Hospitium.BookingService.Controllers
 
         [Authorize]
         [HttpPost]
+        /// <summary>Creates a booking for the authenticated guest.</summary>
         public async Task<IActionResult> CreateBooking(CreateBookingDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -41,6 +42,7 @@ namespace Hospitium.BookingService.Controllers
 
         [Authorize]
         [HttpGet("my")]
+        /// <summary>Returns bookings belonging to the authenticated guest.</summary>
         public async Task<IActionResult> GetMyBookings([FromQuery] string? type)
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -54,6 +56,7 @@ namespace Hospitium.BookingService.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
+        /// <summary>Returns bookings for an administrator, optionally filtered by date.</summary>
         public async Task<IActionResult> GetAllBookings([FromQuery] DateTime? date)
         {
             var roleClaim = User.FindFirst("Role");
@@ -65,6 +68,7 @@ namespace Hospitium.BookingService.Controllers
 
         [Authorize(Roles = "HotelManager")]
         [HttpGet("manager")]
+        /// <summary>Returns bookings for rooms owned by the authenticated hotel manager.</summary>
         public async Task<IActionResult> GetManagerBookings()
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -81,6 +85,7 @@ namespace Hospitium.BookingService.Controllers
 
         [Authorize]
         [HttpPut("{bookingId}/cancel")]
+        /// <summary>Cancels a booking when the authenticated caller has access.</summary>
         public async Task<IActionResult> CancelBooking(int bookingId)
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -97,6 +102,7 @@ namespace Hospitium.BookingService.Controllers
 
         [Authorize(Roles = "HotelManager,Admin")]
         [HttpPut("{bookingId}/complete")]
+        /// <summary>Marks a booking complete when the authenticated caller has access.</summary>
         public async Task<IActionResult> CompleteBooking(int bookingId)
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -113,6 +119,7 @@ namespace Hospitium.BookingService.Controllers
 
         [Authorize]
         [HttpGet("{id}")]
+        /// <summary>Returns a booking after checking the authenticated caller's access.</summary>
         public async Task<IActionResult> GetBookingById(int id)
         {
             var userIdClaim = User.FindFirst("UserId");

@@ -1,5 +1,6 @@
 ﻿namespace BookingGrid.MainService.DTOs
 {
+    /// <summary>Filter, sorting, and pagination options for public hotel searches.</summary>
     public class HotelQueryParams
     {
         public string? City { get; set; }

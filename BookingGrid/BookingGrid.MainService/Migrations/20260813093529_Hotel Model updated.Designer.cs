@@ -15,7 +15,6 @@ namespace BookingGrid.MainService.Migrations
     [Migration("20260813093529_Hotel Model updated")]
     partial class HotelModelupdated
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

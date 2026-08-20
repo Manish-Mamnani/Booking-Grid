@@ -171,6 +171,7 @@ namespace BookingGrid.MainService.Services
             return await MapToResponse(booking);
         }
 
+        /// <summary>Maps a booking entity to its response and resolves its related room information.</summary>
         private async Task<BookingResponseDto> MapToResponse(Booking b)
         {
             var dto = new BookingResponseDto

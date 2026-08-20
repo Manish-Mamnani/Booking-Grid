@@ -12,6 +12,7 @@ namespace BookingGrid.AuthService.Repositories
     {
         private readonly AuthDbContext _context;
 
+        /// <summary>Initializes the repository with the authentication database context.</summary>
         public UserRepository(AuthDbContext context)
         {
             _context = context;

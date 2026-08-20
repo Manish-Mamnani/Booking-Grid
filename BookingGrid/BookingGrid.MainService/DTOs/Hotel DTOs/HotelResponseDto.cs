@@ -1,5 +1,6 @@
 namespace BookingGrid.MainService.DTOs
 {
+    /// <summary>Public representation of a hotel and its current availability metadata.</summary>
     public class HotelResponseDto
     {
         public int HotelId { get; set; }

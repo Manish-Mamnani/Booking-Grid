@@ -25,6 +25,7 @@ namespace Hospitium.ReviewService.Controllers
 
         [Authorize]
         [HttpPost]
+        /// <summary>Submits a written review as the authenticated user.</summary>
         public async Task<IActionResult> AddReview(CreateReviewDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -41,6 +42,7 @@ namespace Hospitium.ReviewService.Controllers
 
         [Authorize]
         [HttpPost("rate")]
+        /// <summary>Adds an authenticated user's numeric rating to a hotel.</summary>
         public async Task<IActionResult> RateHotel([FromQuery] int hotelId, [FromQuery] int rating)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -56,6 +58,7 @@ namespace Hospitium.ReviewService.Controllers
         }
 
         [HttpGet("hotel/{hotelId}")]
+        /// <summary>Returns every review submitted for the specified hotel.</summary>
         public async Task<IActionResult> GetReviewsByHotel(int hotelId)
         {
             var result = await _reviewService.GetReviewsByHotelIdAsync(hotelId);

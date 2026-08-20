@@ -15,7 +15,6 @@ namespace BookingGrid.AuthService.Migrations
     [Migration("20260729180200_Initial Migration")]
     partial class InitialMigration
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

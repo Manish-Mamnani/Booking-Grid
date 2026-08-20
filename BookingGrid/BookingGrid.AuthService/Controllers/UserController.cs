@@ -25,6 +25,7 @@ namespace BookingGrid.AuthService.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("managers")]
+        /// <summary>Returns all hotel-manager accounts for an authenticated administrator.</summary>
         public async Task<IActionResult> GetManagers()
         {
             var userIdClaim = User.FindFirst("UserId");
